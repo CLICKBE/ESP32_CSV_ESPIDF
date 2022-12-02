@@ -1,0 +1,14 @@
+﻿Picker ID;Action;Input;Icon;Order number;Item;Item Code;Location;Quantity;Display type;Warning
+test;Check;OK;IconIonicIosNotifications.png;1;Ceci est un test;AK-34;A3;10;3;
+;Set quantity;42;IconIonicIosInformationCircle.png;1;Bolt M6 x 120 mm;BK-12;A9;25;3;
+;Check;OK;IconFeatherMessageCircle.png;1;Screw-in dowel 3.5 x 25 mm;DL-23;B2;8;3;
+;Set quantity;00;IconFeatherMessageCircle.png;1;Plastic wall plug;CL-53;C3;20;3;
+;Set quantity;00;IconFeatherMessageCircle.png;1;Screw cap chrome plated brass diam. 18 mm ;KE-93;C7;3;3;
+;Check;OK;IconFeatherMessageCircle.png;1;M5 stainless steel Sencys locknut;BH-73;D1;8;3;
+;Set quantity;79;IconFeatherMessageCircle.png;1;Female lifting ring Sencys M8 galvanized steel ;KJ-56;D3;1;3;
+;Set quantity;37;IconFeatherMessageCircle.png;1;Angle grey zinc-plated steel 40 mm ;CO-77;D6;22;3;
+;;;IconFeatherMessageCircle.png;2;Nut M18;AK-12;A2;34;3;
+;;;IconFeatherMessageCircle.png;2;Angle grey zinc-plated steel 80 mm;DI-94;B3;3;3;
+;;;IconFeatherMessageCircle.png;2;Adjustable adhesive nail 2kg;KJ-98;B7;10;3;
+;;;IconFeatherMessageCircle.png;2;Powerbutton round hook glossy chrome 6kg;AE-40;C8;4;3;
+;;;IconFeatherMessageCircle.png;2;Steel reinforced table hinge 50x85mm;JI-88;C9;10;3;
