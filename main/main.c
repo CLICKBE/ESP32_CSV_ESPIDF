@@ -28,6 +28,9 @@
 #define TAG_TOK "STRTOK"
 #define FILE_LINE_SIZE 256
 
+int currentLine = -1;
+int nbOfElements = -1;
+const char delimiters[]= ";,";
 
 /**
  * @brief Get the Number Of lines present in a given file
@@ -70,6 +73,14 @@ int getNumberOfElements(char * line, const char * delimiter)
   return nbElements;
 } 
 
+/**
+ * @brief Check if character c is part of the delimiters array
+ * 
+ * @param c The current character to be compared to delimiters
+ * @param delimiters List of characters that are used to split the line
+ * @return true if character is one of the delimiters
+ * @return false if c is not part of delimiters
+ */
 bool isCharInCharArray( char c, const char delimiters[] )
 {
   for( int i = 0; i<strlen(delimiters) ; i++ )
@@ -78,6 +89,15 @@ bool isCharInCharArray( char c, const char delimiters[] )
       return true;
   }
   return false;
+}
+
+/**
+ * @brief  '{"type": "text" ,"data":"COUCOU", "x_start": 100,"y_start": 100,"x_size": 800}{END}'
+ * 
+ */
+void makeJSON ()
+{
+
 }
 
 
@@ -93,17 +113,23 @@ bool isCharInCharArray( char c, const char delimiters[] )
    *
    * @return Only prints out the different elements for now, but should return something (struct ?).
   */
-void splitLine( char lineToSplit[], const char * delimiter[], int nbOfElements )
+void splitLine( char lineToSplit[], const char * delimiter[], char ** elementsInLine, int nbOfElements )
 {
   int previousDelimiterIdx = -1, elementIdx = -1;
   bool last_column_element = true;
-  char elementsInLine [ nbOfElements ][FILE_LINE_SIZE];
+  
+  //char **elementsInLine;// [ nbOfElements ][FILE_LINE_SIZE];
+  //elementsInLine = malloc(nbOfElements * sizeof(char *));
+  //for (int i=0; i<nbOfElements; i++) {
+  //  elementsInLine[i] = malloc(FILE_LINE_SIZE);
+  //}
+
   printf( "Line to be splitted [%s] - size of line : %i\n", lineToSplit, strlen(lineToSplit) );
   for (int i=0; i < strlen(lineToSplit); i++)
   { 
-    char current_char = lineToSplit[ i ];
+    //char current_char = lineToSplit[ i ];
     //printf( "--in splitLine : Character : %c - idx : %i\n",  current_char, i );
-    if( isCharInCharArray(lineToSplit[i], delimiter) )
+    if( isCharInCharArray(lineToSplit[i], delimiters) )
     {
               
       //ESP_LOGI( TAG_SPLITFCT, "Char is a part of delimiters");
@@ -128,13 +154,17 @@ void splitLine( char lineToSplit[], const char * delimiter[], int nbOfElements )
         strcpy( element, "-" );
       }
        
-      printf( "Splitted element : %s\n", element );
-      if( !last_column_element )
-        printf( "Splitted element : -\n" );
+      //printf( "Splitted element : %s\n", element );
+      //if( !last_column_element )
+      //  printf( "Splitted element : -\n" );
   /*      strcpy(elementsInLine[ elementIdx ], element);
         //printf( "%i : %s - size %i\n" , elementIdx, elementsInLine[elementIdx], strlen( elementsInLine[elementIdx] ) );
-        //elements[elementIdx] = element;
-  */      previousDelimiterIdx = i;
+        elements[elementIdx] = element;
+  */  
+      strcpy( elementsInLine[ elementIdx ], element);    
+      printf( "Splitted element [%i]: %s - %p\n", elementIdx, elementsInLine[ elementIdx ], &elementsInLine[ elementIdx ] );
+      previousDelimiterIdx = i;
+      //splittedLine[elementIdx] = element;
 
 
     }
@@ -154,6 +184,34 @@ void displayCharOfLine( char line[] )
   }
     
     
+}
+
+
+void getLine( int lineIdx, FILE * file, char splittedLine[][FILE_LINE_SIZE] )
+{
+  currentLine = lineIdx;
+  rewind(file);
+  
+  char line[FILE_LINE_SIZE];
+  int lineNb = 0;
+
+  while(fgets(line, sizeof(line), file) != NULL)
+  {
+    if( lineNb == lineIdx ) 
+    {
+      splitLine( line, &delimiters, splittedLine, nbOfElements ); 
+      break;
+    }
+    else
+    {
+      lineNb++; 
+    }
+  } 
+}
+
+void getNextLine( FILE * file, char splittedLine[][FILE_LINE_SIZE] ) 
+{
+  getLine(++currentLine, file, splittedLine );
 }
 
 void app_main(void)
@@ -212,17 +270,22 @@ void app_main(void)
   }
   else 
   {
-    const char delimiter[]= ";,";
     char line[FILE_LINE_SIZE];
 
     // Retrieve the numer of elements based on the first line of csv (columns names)
     char * firstLine = fgets( line, sizeof( line ), file );
     ESP_LOGI( TAG, "Size of firstLine % i - line : %s", FILE_LINE_SIZE, firstLine );
-    int nbOfElements = getNumberOfElements( firstLine, &delimiter );
+    nbOfElements = getNumberOfElements( firstLine, &delimiters );
     
     //char ** elementsInFile [ nbOfLines ];
-    char elementsInLine [FILE_LINE_SIZE][ nbOfElements ];
-    //char** elementsInLine;
+    //char elementsInLine [ nbOfElements ][FILE_LINE_SIZE];
+    char** elementsInLine = malloc(nbOfElements * sizeof(char *));
+    for (int i=0; i<nbOfElements; i++) 
+    {
+        elementsInLine[i] = malloc(FILE_LINE_SIZE);
+        printf("elementInLine[%i]: %p\n", i, &elementsInLine[ i ]);
+    }
+    
     //char * elementsInFile [ nbOfLines ][ nbOfElements ];
     
     ESP_LOGI( TAG, "Nb of elements of first line : %i", nbOfElements );
@@ -234,7 +297,33 @@ void app_main(void)
     //for( int i = 0; i< strlen(identifier); i++ )
     //  printf("Character[%i] : %c\n", i, identifier[ i ]);
     //displayCharOfLine( identifier );
-    splitLine( identifier, &delimiter, nbOfElements );
+
+    //currentLine = 4;
+    /*
+    currentLine = 20; // To test the case where a line doesn't exist
+    if( currentLine > getNumberOfLines( file ) )
+    {
+      ESP_LOGE( TAG, "Asked for line (index : %i) doesn't exist, displaying last line in file", currentLine );
+      currentLine = getNumberOfLines( file ) - 1;
+      getLine( currentLine, file );
+    } 
+    else 
+    {
+      getLine( currentLine, file );      
+    } 
+    */
+
+    printf("--- Attempting to display splitted elements\n");
+    splitLine( identifier, &delimiters, elementsInLine, nbOfElements );
+    printf("--- End of Attempting to display splitted elements\n");
+    //printf( "%s\n", elementsInLine[3][5]);
+    
+    for( int i = 0; i < nbOfElements; i++)
+    {
+      printf( "Element in line " );
+      printf( "%p \n", elementsInLine[i]);//, elementsInLine[nbOfElements] );
+    }
+    printf("elementInLine[%i]: %p\n", 1000, &elementsInLine[ 1000 ]);
     // Parse the rest of the file's lines
     ESP_LOGI( TAG, "Splitting lines" );
     while(fgets(line, sizeof(line), file) != NULL)
