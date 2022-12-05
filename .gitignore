@@ -1,0 +1,8 @@
+.vscode/
+.devcontainer/
+build/
+components/
+debug.log
+sdkconfig
+sdkconfig.old
+spiffs_data/order*
