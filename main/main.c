@@ -1,14 +1,12 @@
 /**
+ * 
  * @file main.c
  * @author Loïc Reboursière - UMONS, CLick (loic.reboursiere@umons.ac.be)
  * @brief This code demonstrates how to read, parse and store in an array the content of a csv file stored directly on the esp. 
- * The copy of the csv file on the esp has been done following this tutorial : https://esp32tutorials.com/esp32-spiffs-esp-idf/
- *  > Display MenuConfig
- *    > Serial Flasher config : check Flas size
- *    > Partition table : 
- *      > Partition table : Custom partition table, 
- *      > Enter name of csv partition file
- *    > Hit save
+ * ESP32 CSV with ESP-IDF– CLICK - UMONS (Loïc Reboursière) is free software: you can redistribute it and/or modify it under the terms of the Apache License Version 2.0. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the Apache License Version 2.0 for more details.
+ * You should have received a copy of the Apache License Version 2.0 along with this program.  If not, see http://www.apache.org/licenses/
+ * Each use of this software must be attributed to University of MONS – CLICK (Loïc Reboursière).
+ * Any other additional authorizations may be asked to avre@umons.ac.be. 
  * @version 0.1
  * @date 2022-11-29
  * 
